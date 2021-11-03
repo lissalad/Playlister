@@ -8,4 +8,9 @@
 {% endfor %}
 <a href="/playlists/{{ playlist._id }}/edit"><p>Edit</p></a>
 
+<p></p>
+<form method="POST" action="/playlists/{{ playlist._id }}/delete">
+  <button type="submit">Delete</button>
+</form>
+
 {% endblock %}
