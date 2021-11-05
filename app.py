@@ -9,7 +9,7 @@ db = client.Playlister
 playlists = db.playlists
 
 app = Flask(__name__)
-
+# cool
 def video_url_creator(id_lst):
     videos = []
     for vid_id in id_lst:
