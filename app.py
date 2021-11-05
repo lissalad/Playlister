@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import os
 
-
-client = MongoClient()
+host = os.environ.get("DB_URL")
+client = MongoClient(host)
 db = client.Playlister
 playlists = db.playlists
 
@@ -97,6 +98,21 @@ def playlists_delete(playlist_id):
     return redirect(url_for('playlists_index'))
 
 
+
+# Add this header to distinguish Comment routes from Playlist routes
+########## COMMENT ROUTES ##########
+
+@app.route('/playlists/comments', methods=['POST'])
+def comments_new():
+    """Submit a new comment."""
+    # TODO: Fill in the code here to build the comment object,
+    # and then insert it into the MongoDB comments collection
+    comments={
+      'playlist_id': request.form.get('playlist_id'),
+      'title': request.form.get('title'),
+      'description': request.form.get('description')
+      }
+    return redirect(url_for('playlists_show', playlist_id=request.form.get('playlist_id')))
 
 
 # ----------- RUN ----------------------------------------------------- #
