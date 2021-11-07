@@ -5,7 +5,8 @@ import os
 import certifi
 
 host = os.environ.get("DB_URL")
-client = MongoClient(host, tlsCAFile=certifi.where())
+client = MongoClient(host=host)
+# , tlsCAFile=certifi.where()
 
 db = client.Playlister
 playlists = db.playlists
