@@ -3,10 +3,13 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import os
 import certifi
+from datetime import datetime
+
 
 host = os.environ.get("DB_URL")
-client = MongoClient(host=host)
-# , tlsCAFile=certifi.where()
+print(host)
+client = MongoClient(host, tlsCAFile=certifi.where())
+# 
 
 db = client.Playlister
 playlists = db.playlists
@@ -27,8 +30,14 @@ def playlists_show(playlist_id):
     playlist = playlists.find_one({'_id': ObjectId(playlist_id)})
     playlist_comments = comments.find({'playlist_id': playlist_id})
 
-    print(playlist_comments[0])
+    # print(playlist_comments[0])
     return render_template('playlists_show.html', playlist=playlist, comments=playlist_comments)
+
+@app.route('/playlists/<playlist_id>/delete', methods=['POST'])
+def playlists_delete(playlist_id):
+    """Delete one playlist."""
+    playlists.delete_one({'_id': ObjectId(playlist_id)})
+    return redirect(url_for('playlists_index'))
 
 @app.route('/playlists/new')
 def playlists_new():
@@ -42,7 +51,7 @@ def playlists_edit(playlist_id):
     # Add the title parameter here
     return render_template('playlists_edit.html', playlist=playlist, title='Edit Playlist')
 
-
+# ---------------------------------------------------- #
 @app.route('/playlists', methods=['POST'])
 def playlists_submit():
     video_ids = request.form.get('video_ids').split()
@@ -51,8 +60,9 @@ def playlists_submit():
         'title': request.form.get('title'),
         'description': request.form.get('description'),
         'videos': videos,
-        'video_ids': video_ids
-    }
+        'video_ids': video_ids,
+        'created_at': datetime.now()
+      }
     playlists.insert_one(playlist)
     return redirect(url_for('playlists_index'))
 
@@ -76,11 +86,7 @@ def playlists_update(playlist_id):
     # take us back to the playlist's show page
     return redirect(url_for('playlists_show', playlist_id=playlist_id))
 
-@app.route('/playlists/<playlist_id>/delete', methods=['POST'])
-def playlists_delete(playlist_id):
-    """Delete one playlist."""
-    playlists.delete_one({'_id': ObjectId(playlist_id)})
-    return redirect(url_for('playlists_index'))
+
 
 
 # ------------------ HELPER ------------------------------------- #
@@ -106,6 +112,13 @@ def comments_new():
     comments.insert_one(comment)
     return redirect(url_for('playlists_show', playlist_id=request.form.get('playlist_id')))
 
+@app.route('/playlists/comments/<comment_id>/delete', methods=['POST'])
+def comments_delete(comment_id):
+    """Delete one comment."""
+    comment = comments.find_one({'_id': ObjectId(comment_id)})
+
+    test =comments.delete_one({'_id': ObjectId(comment_id)})
+    return redirect(url_for('playlists_show', playlist_id=comment["playlist_id"]))
 
 # ----------- RUN ----------------------------------------------------- #
 if __name__ == '__main__':
