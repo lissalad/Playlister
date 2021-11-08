@@ -1,9 +1,9 @@
-<div class="card w-100">
-  <div class="card-block">
+<div class="card w-100 m-2">
+  <div class="card-block m-3">
     <h4 class="card-title">{{ comment.title }}</h4>
     <p class="card-text">{{ comment.description }}</p>
   </div>
   <form method="POST" action="/playlists/comments/{{ comment._id }}/delete">
-    <button class="btn btn-primary" type="submit">Delete</button>
+    <button class="btn btn-primary m-3" type="submit">Delete</button>
   </form>
 </div>
